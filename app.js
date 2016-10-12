@@ -11,7 +11,8 @@ var sales = require('./routes/sales');
 var saving = require('./routes/saving');
 var payments = require('./routes/payments');
 var purchase = require('./routes/purchase');
-var url = 'mongodb://localhost:27017/shubhlabh';
+//var url = 'mongodb://localhost:27017/shubhlabh';
+var url = 'mongodb://arun:123456@ds053156.mlab.com:53156/shubhlabh';
 var mongoose = require('mongoose');
 mongoose.connect(url);
 
