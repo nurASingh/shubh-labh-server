@@ -11,18 +11,18 @@ var sales = require('./routes/sales');
 var saving = require('./routes/saving');
 var payments = require('./routes/payments');
 var purchase = require('./routes/purchase');
-//var url = 'mongodb://localhost:27017/shubhlabh';
-var url = 'mongodb://arun:123456@ds053156.mlab.com:53156/shubhlabh';
+var urlLocal = 'mongodb://localhost:27017/shubhlabh';
+var urlDbServer = 'mongodb://arun:123456@ds053156.mlab.com:53156/shubhlabh';
 var mongoose = require('mongoose');
-mongoose.connect(url);
+mongoose.connect(urlDbServer);
 
 var app = express();
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+db.once('open', function (err) {
     // we're connected!
-    console.log("Connected correctly to server");
+    console.log("Connected correctly to server" + err);
 });
 
 // view engine setup
@@ -36,6 +36,27 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Add headers
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+   // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', false);
+
+    // Pass to next layer of middleware
+    next();
+});
+
 
 app.use('/', routes);
 app.use('/users', users);

@@ -34,19 +34,21 @@ router.post('/', function(req, res, next) {
 
 /* post users listing. */
 router.post('/register', function(req, res, next) {
+  console.log('register');
   var obj = req.body.user;
+  console.log(obj);
   User.findOne({ phone : obj.phone},function(err,result){
     if(err){
-      res.send('Error while creating user');
+      res.send({passed : false ,message :'Error while creating user'});
     }else{
       if(result){
-        res.send('User allready exist with phone number '+ obj.phone);
+        res.send({passed : false ,message :'User allready exist with phone number '+ obj.phone});
       }else{
           User.create(obj, function(err, result){ 
               if(err){
-                res.send(err);
+                res.send({passed : false ,message :err});
               }else{
-                res.send('User created successfull your user id is ' + result.phone);
+                res.send({passed : true ,message :'User created successfull your user id is ' + result.phone});
               } 
           });
       }
@@ -56,16 +58,16 @@ router.post('/register', function(req, res, next) {
 
 
 router.post('/login', function(req, res, next) {
-  var userid = req.body.phone , password = req.body.password;
+  var userid = req.body.user.phone , password = req.body.user.password;
   
   User.findOne({ phone : userid , password : password},function(err,result){
     if(err){
-      res.send('Error while log in');
+      res.send({passed : false ,message :'Error while log in'});
     }else{
       if(result){
-        res.send('Loged in');
+        res.send({passed : true ,result :result});
       }else{
-          res.send('Invalid userid and password');
+        res.send({passed : false ,message :'Invalid userid and password'});
       }
      } 
   });
