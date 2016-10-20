@@ -1,131 +1,130 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user.js');
+var Verify = require('../verify.js');
+var passport = require('passport');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  User.find({}, function(err, result){ 
-      if(err){
-        res.send(err);
-      }else{
-        res.send(result);
-      } 
-   });
+router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
+  User.find({}, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
-/* post users listing. */
-router.post('/', function(req, res, next) {
-  var obj = {
-    name : 'Arun Kumar Singh',
-    password : '123456',
-    phone : 8373908820,
-    licence : 'DL10SE3450',
-    address : 'New Singh Medical Stores'
-  };
-  User.create(obj, function(err, result){ 
-      if(err){
-        res.send(err);
-      }else{
-        res.send(result);
-      } 
-   });
+router.post('/', function (req, res, next) {
+  User.create(obj, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
-
-/* post users listing. */
-router.post('/register', function(req, res, next) {
-  console.log('register');
+router.post('/register', function (req, res, next) {
+  console.log('/register');
   var obj = req.body.user;
-  console.log(obj);
-  User.findOne({ phone : obj.phone},function(err,result){
-    if(err){
-      res.send({passed : false ,message :'Error while creating user'});
-    }else{
-      if(result){
-        res.send({passed : false ,message :'User allready exist with phone number '+ obj.phone});
-      }else{
-          User.create(obj, function(err, result){ 
-              if(err){
-                res.send({passed : false ,message :err});
-              }else{
-                res.send({passed : true ,message :'User created successfull your user id is ' + result.phone});
-              } 
-          });
-      }
-     } 
+  obj.username = req.body.user.phone;
+  var password = req.body.user.password;
+  delete obj.password;
+  console.log(obj + '===');
+  User.register(new User(obj),password, function (err, user) {
+    if (err) {
+      res.send({
+        
+        success : false,
+        message :'Registration failed : ' + err
+      
+      });
+    } else {
+      res.send({
+        success : true,
+        message :'Registration Done - Login with : ' + user.username
+      });
+    }
   });
+
 });
 
-
-router.post('/login', function(req, res, next) {
-  var userid = req.body.user.phone , password = req.body.user.password;
-  
-  User.findOne({ phone : userid , password : password},function(err,result){
-    if(err){
-      res.send({passed : false ,message :'Error while log in'});
-    }else{
-      if(result){
-        res.send({passed : true ,result :result});
-      }else{
-        res.send({passed : false ,message :'Invalid userid and password'});
-      }
-     } 
-  });
-});
-
-
-/* GET users listing. */
-router.delete('/', function(req, res, next) {
-  var userid = req.body.phone , password = req.body.password;
-  User.findOne({ phone : userid , password : password},function(err,result){
-    if(err){
-      res.send('Error while log in');
-    }else{
-      if(result){
-          User.remove({phone : userid},function(err,result){
-            console.log(err + '==' + result);
-            if(err){
-              res.send('Error while deleting user');
-            }else{
-              if(result){
-                res.send('User deleted successfull');
-              }else{
-                res.send('No user found');
-              }
-            }
+router.post('/login', function (req, res, next) {
+  passport.authenticate('local', function (err, user, info) {
+    console.log(user);
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(401).json({
+        err: info
+      });
+    }
+    req.logIn(user, function (err) {
+      if (err) {
+        return res.status(500).json({
+          err: 'Could not log in user'
         });
-      }else{
-          res.send('Invalid userid and password');
       }
-     } 
+      var token = Verify.getToken(user);
+      res.status(200).json({
+        status: 'Login successful!',
+        success: true,
+        token: token,
+        user : {name : user.name , phone : user.phone ,address : user.address ,licence : user.licence}
+      });
+    });
+  })(req, res, next);
+});
+
+router.delete('/', function (req, res, next) {
+  var userid = req.body.phone, password = req.body.password;
+  User.findOne({ phone: userid, password: password }, function (err, result) {
+    if (err) {
+      res.send('Error while log in');
+    } else {
+      if (result) {
+        User.remove({ phone: userid }, function (err, result) {
+          if (err) {
+            res.send('Error while deleting user');
+          } else {
+            if (result) {
+              res.send('User deleted successfull');
+            } else {
+              res.send('No user found');
+            }
+          }
+        });
+      } else {
+        res.send('Invalid userid and password');
+      }
+    }
   });
 });
 
-/* GET users listing. */
-router.put('/', function(req, res, next) {
-  var userid = req.body.phone , password = req.body.password;
+router.put('/', function (req, res, next) {
+  var userid = req.body.phone, password = req.body.password;
   var updatedData = req.body.user;
-  User.findOne({ phone : userid , password : password},function(err,result){
-    if(err){
+  User.findOne({ phone: userid, password: password }, function (err, result) {
+    if (err) {
       res.send('Error while log in');
-    }else{
-      if(result){
-          User.update(updatedData,function(err,result){
-            console.log(err + '==' + result);
-            if(err){
-              res.send('Error while deleting user');
-            }else{
-              if(result){
-                res.send('User deleted successfull');
-              }else{
-                res.send('No user found');
-              }
+    } else {
+      if (result) {
+        User.update(updatedData, function (err, result) {
+          if (err) {
+            res.send('Error while deleting user');
+          } else {
+            if (result) {
+              res.send('User deleted successfull');
+            } else {
+              res.send('No user found');
             }
+          }
         });
-      }else{
-          res.send('Invalid userid and password');
+      } else {
+        res.send('Invalid userid and password');
       }
-     } 
+    }
   });
 });
 

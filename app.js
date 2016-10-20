@@ -5,16 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var config = require('./config.js');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var sales = require('./routes/sales');
 var saving = require('./routes/saving');
 var payments = require('./routes/payments');
 var purchase = require('./routes/purchase');
-var urlLocal = 'mongodb://localhost:27017/shubhlabh';
-var urlDbServer = 'mongodb://arun:123456@ds053156.mlab.com:53156/shubhlabh';
 var mongoose = require('mongoose');
-mongoose.connect(urlDbServer);
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+mongoose.connect(config.urlLocal);
 
 var app = express();
 
@@ -57,6 +58,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+var User= require('./models/user');
+app.use(passport.initialize());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use('/', routes);
 app.use('/users', users);
