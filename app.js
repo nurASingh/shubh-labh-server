@@ -11,6 +11,7 @@ var users = require('./routes/users');
 var sales = require('./routes/sales');
 var saving = require('./routes/saving');
 var payments = require('./routes/payments');
+var expense = require('./routes/expense');
 var purchase = require('./routes/purchase');
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -70,6 +71,7 @@ app.use('/sales', sales);
 app.use('/payments', payments);
 app.use('/purchase', purchase);
 app.use('/saving', saving);
+app.use('/expense', expense);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

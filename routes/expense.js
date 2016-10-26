@@ -19,6 +19,7 @@ router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
 /* post users listing. */
 router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var obj = req.body.expense;
+  console.log(obj);
   obj.phone = req.decoded._doc.phone;
   Expense.create(obj, function (err, result) {
     if (err) {
