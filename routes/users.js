@@ -25,13 +25,9 @@ router.post('/', function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
-  console.log('/register');
   var obj = req.body.user;
   obj.username = req.body.user.phone;
-  var password = req.body.user.password;
-  delete obj.password;
-  console.log(obj + '===');
-  User.register(new User(obj),password, function (err, user) {
+  User.register(new User(obj),req.body.user.password, function (err, user) {
     if (err) {
       res.send({
         

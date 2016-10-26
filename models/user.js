@@ -11,6 +11,11 @@ var userSchema = new Schema({
     },
     password:  {
         type: Schema.Types.String,
+        ref: 'users',
+        required: true 
+    },
+    email:  {
+        type: Schema.Types.String,
         ref: 'users'
     },
     phone:  {
