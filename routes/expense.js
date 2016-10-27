@@ -19,7 +19,6 @@ router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
 /* post users listing. */
 router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var obj = req.body.expense;
-  console.log(obj);
   obj.phone = req.decoded._doc.phone;
   Expense.create(obj, function (err, result) {
     if (err) {
@@ -42,7 +41,6 @@ router.put('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var date = req.body.date;
   var updatedData = req.body.expense;
   updatedData.phone = phone;
-  console.log(updatedData);
   Expense.find({ phone: phone, date: date }, function (err, result) {
     if (err) {
       res.send('Error update Expense');

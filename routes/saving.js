@@ -41,7 +41,6 @@ router.put('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var date = req.body.date;
   var updatedData = req.body.saving;
   updatedData.phone = phone;
-  console.log(updatedData);
   Saving.find({ phone: phone, date: date }, function (err, result) {
     if (err) {
       res.send('Error update Saving');

@@ -1,8 +1,6 @@
 /* post users listing. */
 router.post('/register', function (req, res, next) {
-  console.log('register');
   var obj = req.body.user;
-  console.log(obj);
   User.findOne({ phone: obj.phone }, function (err, result) {
     if (err) {
       res.send({ passed: false, message: 'Error while creating user' });

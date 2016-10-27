@@ -4,7 +4,6 @@ var User = require('../models/user.js');
 var Sales = require('../models/sale.js');
 
 router.all('/', function (req, res, next) {
-  console.log('Verify user for all calls');
   next();
 });
 
@@ -45,7 +44,6 @@ router.delete('/', function (req, res, next) {
     } else {
       if (result) {
         Sales.remove(salesData, function (err, result) {
-          console.log(err + '==' + result);
           if (err) {
             res.send('Error while deleting sales');
           } else {
@@ -73,7 +71,6 @@ router.put('/', function (req, res, next) {
     } else {
       if (result) {
         Sales.update(salesDataNew, function (err, result) {
-          console.log(err + '==' + result);
           if (err) {
             res.send('Error while deleting sales');
           } else {
