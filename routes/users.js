@@ -27,22 +27,53 @@ router.post('/', function (req, res, next) {
 router.post('/register', function (req, res, next) {
   var obj = req.body.user;
   obj.username = req.body.user.phone;
-  User.register(new User(obj),req.body.user.password, function (err, user) {
+  User.register(new User(obj), req.body.user.password, function (err, user) {
     if (err) {
       res.send({
-        
-        success : false,
-        message :'Registration failed : ' + err
-      
+
+        success: false,
+        message: 'Registration failed : ' + err
+
       });
     } else {
       res.send({
-        success : true,
-        message :'Registration Done - Login with : ' + user.username
+        success: true,
+        message: 'Registration Done - Login with : ' + user.username
       });
     }
   });
 
+});
+
+router.post('/changePassword', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
+  var updatedUSer = {};
+  updatedUSer = Object.assign(updatedUSer, req.decoded._doc);
+  delete updatedUSer._id;
+  
+  updatedUSer.password = req.body.newUser;
+  console.log(updatedUSer);
+  User.findOne({ phone: req.decoded._doc.phone }, function (err, result) {
+    if (err) {
+      res.send('Error while log in');
+    } else {
+      if (result) {
+        console.log(result);
+        User.update(updatedUSer, function (err, result) {
+          if (err) {
+            res.send('Error while deleting user' + err);
+          } else {
+            if (result) {
+              res.send('User deleted successfull');
+            } else {
+              res.send('No user found');
+            }
+          }
+        });
+      } else {
+        res.send('Invalid userid and password');
+      }
+    }
+  });
 });
 
 router.post('/login', function (req, res, next) {
@@ -66,7 +97,7 @@ router.post('/login', function (req, res, next) {
         status: 'Login successful!',
         success: true,
         token: token,
-        user : {name : user.name , phone : user.phone ,address : user.address ,licence : user.licence}
+        user: { name: user.name, phone: user.phone, address: user.address, licence: user.licence }
       });
     });
   })(req, res, next);

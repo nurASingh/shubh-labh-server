@@ -16,6 +16,22 @@ router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   });
 });
 
+
+router.post('/getSavingByDate', Verify.verifyOrdinaryUser, function (req, res, next) {
+  var date = req.body.dates;
+  var searchParam = {
+    phone: req.decoded._doc.phone,
+    date: { "$gte": date.start, "$lte": date.end }
+  };
+  Saving.find(searchParam, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 /* post users listing. */
 router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var obj = req.body.saving;

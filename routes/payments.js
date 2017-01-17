@@ -5,7 +5,7 @@ var Verify = require('../verify.js');
 var passport = require('passport');
 
 
-/* GET users listing. */
+/* GET  listing. */
 router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   Payment.find({ phone: req.decoded._doc.phone }, function (err, result) {
     if (err) {
@@ -16,8 +16,24 @@ router.get('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   });
 });
 
-/* post users listing. */
-router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
+/* GET  listing. */
+router.post('/getPaymentByDate', Verify.verifyOrdinaryUser, function (req, res, next) {
+  var date = req.body.dates;
+  var searchParam = {
+    phone: req.decoded._doc.phone,
+    date: { "$gte": date.start, "$lte": date.end }
+  };
+  Payment.find(searchParam, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+/* post  listing. */
+router.post('/', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
   var obj = req.body.payment;
   obj.phone = req.decoded._doc.phone;
   Payment.create(obj, function (err, result) {
@@ -27,16 +43,11 @@ router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
       res.send(result);
     }
   });
-  //res.send('post');
 });
 
-/* GET users listing. */
-router.delete('/', function (req, res, next) {
-  res.send('delete');
-});
 
-/* GET users listing. */
-router.put('/', Verify.verifyOrdinaryUser, function (req, res, next) {
+/* GET  listing. */
+router.put('/', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
   var phone = req.decoded._doc.phone;
   var date = req.body.date;
   var updatedData = req.body.payment;

@@ -23,6 +23,22 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
+// router.post('/getPaymentByDate', Verify.verifyOrdinaryUser, function (req, res, next) {
+//   var date = req.body.dates;
+//   var searchParam = {
+//     phone: req.decoded._doc.phone,
+//     date: { "$gte": date.start, "$lte": date.end }
+//   };
+//   Sales.find(searchParam, function (err, result) {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       res.send(result);
+//     }
+//   });
+// });
+
 /* post users listing. */
 router.post('/', function (req, res, next) {
   var salesData = req.body.sales;
