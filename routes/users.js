@@ -46,24 +46,20 @@ router.post('/register', function (req, res, next) {
 });
 
 router.post('/changePassword', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function (req, res, next) {
-  var updatedUSer = {};
-  updatedUSer = Object.assign(updatedUSer, req.decoded._doc);
-  delete updatedUSer._id;
-  
-  updatedUSer.password = req.body.newUser;
-  console.log(updatedUSer);
   User.findOne({ phone: req.decoded._doc.phone }, function (err, result) {
     if (err) {
       res.send('Error while log in');
     } else {
       if (result) {
         console.log(result);
-        User.update(updatedUSer, function (err, result) {
+        User.remove({ phone: req.decoded._doc.phone }, function (err, result) {
           if (err) {
             res.send('Error while deleting user' + err);
           } else {
             if (result) {
-              res.send('User deleted successfull');
+              //res.send('User deleted successfull');
+              req.decoded._doc.deleted = true;
+              next();
             } else {
               res.send('No user found');
             }
@@ -74,6 +70,37 @@ router.post('/changePassword', Verify.verifyOrdinaryUser, Verify.verifyAdmin, fu
       }
     }
   });
+}, function (req, res, next) {
+  var updatedUSer = {};
+  updatedUSer = Object.assign(updatedUSer, req.decoded._doc);
+  delete updatedUSer._id;
+  var deleted;
+  updatedUSer.password = req.body.newUser;
+  updatedUSer.username = req.decoded._doc.phone;
+  console.log(updatedUSer);
+  if (req.decoded._doc.deleted) {
+    
+      setTimeout(function () {
+        User.register(new User(updatedUSer), updatedUSer.password, function (err, user) {
+          if (err) {
+            res.send({
+
+              success: false,
+              message: 'Registration failed : ' + err
+
+            });
+          } else {
+            res.send({
+              success: true,
+              message: 'Registration Done - Login with : ' + user.username
+            });
+          }
+        });
+      }, 2000);
+     
+  }else{
+    res.send('error');
+  }
 });
 
 router.post('/login', function (req, res, next) {

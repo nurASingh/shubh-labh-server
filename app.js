@@ -13,10 +13,11 @@ var saving = require('./routes/saving');
 var payments = require('./routes/payments');
 var expense = require('./routes/expense');
 var purchase = require('./routes/purchase');
+var cash = require('./routes/cash');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-mongoose.connect(config.urlLocal);
+mongoose.connect(config.urlDbServer);
 
 var app = express();
 
@@ -72,6 +73,7 @@ app.use('/payments', payments);
 app.use('/purchase', purchase);
 app.use('/saving', saving);
 app.use('/expense', expense);
+app.use('/cash',cash);
 
 app.post('/authTest' , function(req,res){
 
