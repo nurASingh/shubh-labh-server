@@ -36,6 +36,7 @@ router.post('/getSavingByDate', Verify.verifyOrdinaryUser, function (req, res, n
 router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var obj = req.body.saving;
   obj.phone = req.decoded._doc.phone;
+  console.log(obj);
   Saving.create(obj, function (err, result) {
     if (err) {
       res.send(err);

@@ -36,6 +36,7 @@ router.post('/getExpensesByDate', Verify.verifyOrdinaryUser, function (req, res,
 router.post('/', Verify.verifyOrdinaryUser, function (req, res, next) {
   var obj = req.body.expense;
   obj.phone = req.decoded._doc.phone;
+  console.log(obj);
   Expense.create(obj, function (err, result) {
     if (err) {
       res.send(err);

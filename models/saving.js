@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var amountSchema = new Schema({
-    name: { type: Schema.Types.String },
+    type: { type: Schema.Types.String },
     amount: { type: Schema.Types.Number }
 });
 

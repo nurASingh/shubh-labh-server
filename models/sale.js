@@ -2,29 +2,23 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var saleSchema = new Schema({    
-    phone:  {
-        type: Schema.Types.Number,
-        ref: 'sales',
-        required: true 
+    payment: {
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
     },
-    date: {
-        type: Schema.Types.Date,
-        ref: 'sales',
-        required: true
+	saving: {
+        type: Schema.Types.ObjectId,
+        ref: 'Saving'
     },
-    amount: {
-        type: Schema.Types.Number,
-        ref: 'sales',
-        required: true
+	expenses: {
+        type: Schema.Types.ObjectId,
+        ref: 'Expense'
     },
-    comments :{
-        type: Schema.Types.String,
-        ref: 'sales',
+	cash: {
+        type: Schema.Types.ObjectId,
+        ref: 'Cash'
     }
-}, {
-    timestamps: true
 });
 
 var Sales = mongoose.model('Sales', saleSchema);
-
 module.exports = Sales;

@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var amountSchema = new Schema({
-    amount: { type: Schema.Types.Number }
+    amount: { type: Schema.Types.Number },
+	type: { type: Schema.Types.String }
 });
 
 var cashSchema = new Schema({
